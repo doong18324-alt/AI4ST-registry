@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI4S&T 연구센터 — 참여기관 담당자 등록</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary: #1F4E79;
+    --primary-light: #2E75B6;
+    --accent: #C00000;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --주관: #1F4E79;
+    --공동: #2E75B6;
+    --위탁: #6b7280;
+    --협력: #059669;
+    --지자체: #d97706;
+  }
+  body {
+    font-family: 'Pretendard', 'Malgun Gothic', '맑은 고딕', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px 80px; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(31, 78, 121, 0.2);
+  }
+  .header .ministry {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: 0.3px;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+  .header h2 {
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.92;
+    margin-bottom: 16px;
+  }
+  .header .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 13px;
+    opacity: 0.88;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.25);
+  }
+  .header .meta span::before { content: "▸ "; opacity: 0.7; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    background: var(--card);
+    padding: 6px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .tab {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--muted);
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: var(--primary);
+    color: white;
+  }
+  .tab:not(.active):hover { background: #f0f4f8; color: var(--primary); }
+
+  /* CARD */
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 22px;
+  }
+
+  /* GUIDE BOX */
+  .guide {
+    background: #fff7ed;
+    border-left: 4px solid #f59e0b;
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+  .guide strong { color: #b45309; }
+  .guide ol { margin-left: 20px; margin-top: 6px; }
+
+  /* FORM */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
+  }
+  .form-group { display: flex; flex-direction: column; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+  .form-group label .req { color: var(--accent); margin-left: 2px; }
+  .form-group input,
+  .form-group select {
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.15s;
+    background: white;
+  }
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(46, 117, 182, 0.12);
+  }
+  .form-group .hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* RADIO GROUP for 기관구분 + 역할 */
+  .radio-group {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 8px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+    background: white;
+  }
+  .radio-group label:hover { border-color: var(--primary-light); }
+  .radio-group input[type="radio"] { display: none; }
+  .radio-group input[type="radio"]:checked + span {
+    color: white;
+  }
+  .radio-group label:has(input:checked) { background: var(--primary); border-color: var(--primary); color: white; }
+  .radio-group.role-group { grid-template-columns: repeat(3, 1fr); }
+
+  /* AI 전문가 체크박스 (강조) */
+  .ai-expert-box {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1.5px solid #93c5fd;
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ai-expert-box input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+  .ai-expert-box label {
+    flex: 1;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1e40af;
+  }
+  .ai-expert-box .ai-hint {
+    display: block;
+    font-size: 12px;
+    color: #1e40af;
+    font-weight: 400;
+    margin-top: 3px;
+    opacity: 0.85;
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+  .btn {
+    padding: 11px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: #163d61; }
+  .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+  .btn-ghost { background: #f1f5f9; color: #475569; }
+  .btn-ghost:hover { background: #e2e8f0; }
+
+  /* STATS / FILTERS */
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .stat-card {
+    flex: 1;
+    min-width: 110px;
+    background: var(--card);
+    padding: 14px 18px;
+    border-radius: 10px;
+    border-left: 4px solid var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .stat-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .stat-card.active { box-shadow: 0 0 0 2px var(--primary); }
+  .stat-card.total { border-left-color: var(--primary); }
+  .stat-card.주관 { border-left-color: var(--주관); }
+  .stat-card.공동 { border-left-color: var(--공동); }
+  .stat-card.협력 { border-left-color: var(--협력); }
+  .stat-card.위탁 { border-left-color: var(--위탁); }
+  .stat-card.지자체 { border-left-color: var(--지자체); }
+  .stat-card .label { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .stat-card .count { font-size: 22px; font-weight: 700; color: var(--text); margin-top: 2px; }
+  .stat-card .count .unit { font-size: 13px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; background: var(--card); border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 880px; }
+  thead { background: #f8fafc; }
+  th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+  th { font-weight: 600; color: #475569; font-size: 12.5px; white-space: nowrap; }
+  td { color: #334155; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafbfc; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+  }
+  .badge.주관 { background: var(--주관); }
+  .badge.공동 { background: var(--공동); }
+  .badge.위탁 { background: var(--위탁); }
+  .badge.협력 { background: var(--협력); }
+  .badge.지자체 { background: var(--지자체); }
+  .badge-role {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    background: #f1f5f9;
+    color: #475569;
+    margin-left: 4px;
+  }
+  .ai-tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #dbeafe;
+    color: #1e40af;
+    margin-left: 4px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .icon { font-size: 42px; opacity: 0.5; margin-bottom: 8px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #1e293b;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    font-size: 14px;
+    z-index: 1000;
+    transform: translateX(420px);
+    transition: transform 0.3s;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast.success { background: #059669; }
+  .toast.error { background: #dc2626; }
+
+  /* CONTACT SECTION */
+  .contact-box {
+    background: #f0f9ff;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #075985;
+  }
+  .contact-box strong { color: #0c4a6e; }
+
+  /* RESPONSIVE */
+  @media (max-width: 720px) {
+    .container { padding: 16px 12px 60px; }
+    .header { padding: 22px 20px; }
+    .header h1 { font-size: 20px; }
+    .header h2 { font-size: 14px; }
+    .card { padding: 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .radio-group, .radio-group.role-group { grid-template-columns: repeat(2, 1fr); }
+    .stat-card { min-width: calc(50% - 5px); flex: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <span class="ministry">과학기술정보통신부 · 한국연구재단</span>
+    <h1>주관적 통증의 객관적 해석 난제 해결을 위한<br>AI 기반 개인화 통증 Decoding Map · AI 학습 · 피드백 시스템</h1>
+    <h2>2026년도 AI 기반 대학 과학기술 혁신사업 — AI4S&T 연구센터</h2>
+    <div class="meta">
+      <span>주관기관: 삼육대학교</span>
+      <span>연구기간: 2026.8 ~ 2032.7 (6년, 3+3)</span>
+      <span>연구비: 연 20억 원 이내 × 6년</span>
+      <span>신청 마감: 2026.5.19. (화) 18:00</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-tab="register">📋 담당자 등록</button>
+    <button class="tab" data-tab="list">👥 등록 현황</button>
+  </div>
+
+  <!-- REGISTER TAB -->
+  <div id="tab-register" class="tab-content">
+    <div class="card">
+      <div class="card-title">📝 참여기관 담당자 등록</div>
+      <div class="card-subtitle">본 과제 신청·수행 관련 연락을 위한 담당자 정보를 등록해주세요. 입력 정보는 컨소시엄 내부 연락망 구축 목적으로만 사용됩니다.</div>
+
+      <form id="registerForm">
+        <div class="form-grid">
+
+          <!-- 기관 구분 -->
+          <div class="form-group full">
+            <label>기관 구분 <span class="req">*</span></label>
+            <div class="radio-group">
+              <label><input type="radio" name="orgType" value="주관" required><span>주관 (삼육대)</span></label>
+              <label><input type="radio" name="orgType" value="공동"><span>공동(공동)연구원</span></label>
+              <label><input type="radio" name="orgType" value="위탁"><span>위탁</span></label>
+              <label><input type="radio" name="orgType" value="협력"><span>협력</span></label>
+              <label><input type="radio" name="orgType" value="지자체"><span>지자체</span></label>
+            </div>
+          </div>
+
+          <!-- 역할 (RFP 자격 기준) -->
+          <div class="form-group full">
+            <label>본 과제 내 역할 <span class="req">*</span></label>
+            <div class="radio-group role-group">
+              <label><input type="radio" name="role" value="연구책임자(센터장)" required><span>연구책임자(센터장)</span></label>
+              <label><input type="radio" name="role" value="참여(공동)연구원"><span>참여(공동)연구원</span></label>
+              <label><input type="radio" name="role" value="참여연구원"><span>참여연구원</span></label>
+              <label><input type="radio" name="role" value="기관 행정담당자"><span>기관 행정담당자</span></label>
+              <label><input type="radio" name="role" value="협력 실무담당자"><span>협력 실무담당자</span></label>
+              <label><input type="radio" name="role" value="기타"><span>기타</span></label>
+            </div>
+            <div class="hint">※ 참여(공동)연구원·참여연구원의 자격 기준은 RFP 신청요강을 참조하세요.</div>
+          </div>
+
+          <!-- 기관명 / 부서 -->
+          <div class="form-group">
+            <label>기관명 <span class="req">*</span></label>
+            <input type="text" name="orgName" required>
+          </div>
+          <div class="form-group">
+            <label>부서 · 학과 · 연구실</label>
+            <input type="text" name="department">
+          </div>
+
+          <!-- 이름 / 직책 -->
+          <div class="form-group">
+            <label>담당자명 <span class="req">*</span></label>
+            <input type="text" name="personName" required placeholder="홍길동">
+          </div>
+          <div class="form-group">
+            <label>직책</label>
+            <input type="text" name="position" placeholder="예: 교수 / 책임연구원 / 팀장 / 대표">
+          </div>
+
+          <!-- 연락처 -->
+          <div class="form-group">
+            <label>휴대폰 <span class="req">*</span></label>
+            <input type="tel" name="phone" required placeholder="010-1234-5678">
+          </div>
+          <div class="form-group">
+            <label>이메일 <span class="req">*</span></label>
+            <input type="email" name="email" required placeholder="name@example.ac.kr">
+          </div>
+
+          <!-- AI 전문가 여부 (RFP 필수 요건 충족 추적) -->
+          <div class="ai-expert-box">
+            <input type="checkbox" id="aiExpert" name="aiExpert">
+            <label for="aiExpert">
+              AI 전문가에 해당 (AI 관련 학위 또는 경력 보유)
+              <span class="ai-hint">※ AI4S&T 연구센터는 공동연구진 내 AI 전문가 1인 이상 참여가 필수 요건입니다 (미충족 시 요건 탈락). 해당되는 경우 체크해주세요.</span>
+            </label>
+          </div>
+
+          <!-- 비고 -->
+          <div class="form-group full">
+            <label>비고 (담당 영역 · 전문 분야 등)</label>
+            <input type="text" name="note">
+          </div>
+
+        </div>
+
+        <div class="btn-row">
+          <button type="reset" class="btn btn-ghost">초기화</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">등록하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- LIST TAB -->
+  <div id="tab-list" class="tab-content" style="display:none;">
+    <div class="card">
+      <div class="card-title">👥 등록 현황</div>
+      <div class="card-subtitle">기관 구분을 클릭하여 필터링할 수 있습니다.</div>
+
+      <div class="stats" id="stats">
+        <div class="stat-card total active" data-filter="all">
+          <div class="label">전체</div>
+          <div class="count" id="count-all">0<span class="unit">명</span></div>
+        </div>
+        <div class="stat-card 주관" data-filter="주관">
+          <div class="label">주관</div>
+          <div class="count" id="count-주관">0<span class="unit">명</span></div>
+        </div>
+        <div class="stat-card 공동" data-filter="공동">
+          <div class="label">공동</div>
+          <div class="count" id="count-공동">0<span class="unit">명</span></div>
+        </div>
+        <div class="stat-card 협력" data-filter="협력">
+          <div class="label">협력</div>
+          <div class="count" id="count-협력">0<span class="unit">명</span></div>
+        </div>
+        <div class="stat-card 위탁" data-filter="위탁">
+          <div class="label">위탁</div>
+          <div class="count" id="count-위탁">0<span class="unit">명</span></div>
+        </div>
+        <div class="stat-card 지자체" data-filter="지자체">
+          <div class="label">지자체</div>
+          <div class="count" id="count-지자체">0<span class="unit">명</span></div>
+        </div>
+      </div>
+
+      <div class="guide" id="aiCheckBox" style="background:#eff6ff; border-left-color:#3b82f6; display:none;">
+        <strong>🤖 AI 전문가 요건 현황:</strong> 공동연구진(연구책임자 + 참여(공동)연구원) 중 AI 전문가 <strong id="aiCount">0</strong>명 등록 — <span id="aiStatus">미충족 (1명 이상 필요)</span>
+      </div>
+
+      <div class="table-wrap">
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th style="width:36px;">No.</th>
+              <th>구분</th>
+              <th>기관 · 부서</th>
+              <th>이름 · 직책</th>
+              <th>역할</th>
+              <th>휴대폰</th>
+              <th>이메일</th>
+              <th>등록일</th>
+            </tr>
+          </thead>
+          <tbody id="dataBody">
+            <tr><td colspan="8" class="empty-state">
+              <div class="icon">📭</div>
+              <div>등록된 담당자가 없습니다.</div>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ====================================================
+  // ⚙️ Google Apps Script 웹 앱 URL을 여기에 입력하세요
+  // ====================================================
+  const SCRIPT_URL = ""; // 예: "https://script.google.com/macros/s/AKfycb.../exec"
+
+  // ----- Tab Switching -----
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).style.display = 'block';
+      if (tab.dataset.tab === 'list') loadData();
+    });
+  });
+
+  // ----- Toast -----
+  function toast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    setTimeout(() => t.classList.remove('show'), 3200);
+  }
+
+  // ----- Form Submit -----
+  const form = document.getElementById('registerForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const data = {
+      timestamp: new Date().toLocaleString('ko-KR'),
+      orgType: fd.get('orgType'),
+      orgName: fd.get('orgName').trim(),
+      department: (fd.get('department') || '').trim(),
+      role: fd.get('role'),
+      personName: fd.get('personName').trim(),
+      position: (fd.get('position') || '').trim(),
+      phone: fd.get('phone').trim(),
+      email: fd.get('email').trim(),
+      aiExpert: fd.get('aiExpert') ? 'Y' : 'N',
+      note: (fd.get('note') || '').trim()
+    };
+
+    if (!SCRIPT_URL) {
+      // 로컬 폴백: SCRIPT_URL 미설정 시 sessionStorage에 보관 (테스트용)
+      const local = JSON.parse(sessionStorage.getItem('localData') || '[]');
+      local.push(data);
+      sessionStorage.setItem('localData', JSON.stringify(local));
+      toast('⚠️ Google Sheets 미연동 — 임시 저장됨 (브라우저 세션)', 'error');
+      form.reset();
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.textContent = '등록 중...';
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(data)
+      });
+      toast('✓ 등록이 완료되었습니다.', 'success');
+      form.reset();
+    } catch (err) {
+      toast('등록 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = '등록하기';
+    }
+  });
+
+  // ----- Load Data -----
+  let allData = [];
+  let currentFilter = 'all';
+
+  async function loadData() {
+    if (!SCRIPT_URL) {
+      allData = JSON.parse(sessionStorage.getItem('localData') || '[]');
+      render();
+      return;
+    }
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=list', { method: 'GET' });
+      const json = await res.json();
+      allData = Array.isArray(json) ? json : (json.data || []);
+      render();
+    } catch (err) {
+      allData = [];
+      render();
+      toast('데이터를 불러올 수 없습니다.', 'error');
+    }
+  }
+
+  function render() {
+    // Stats
+    const counts = { all: allData.length, 주관: 0, 공동: 0, 위탁: 0, 협력: 0, 지자체: 0 };
+    let aiCount = 0;
+    allData.forEach(d => {
+      if (counts[d.orgType] !== undefined) counts[d.orgType]++;
+      if (d.aiExpert === 'Y' && (d.role === '연구책임자(센터장)' || d.role === '참여(공동)연구원')) aiCount++;
+    });
+    Object.keys(counts).forEach(k => {
+      const el = document.getElementById('count-' + k);
+      if (el) el.firstChild.textContent = counts[k];
+    });
+
+    // AI expert requirement check
+    const aiBox = document.getElementById('aiCheckBox');
+    if (allData.length > 0) {
+      aiBox.style.display = 'block';
+      document.getElementById('aiCount').textContent = aiCount;
+      const status = document.getElementById('aiStatus');
+      if (aiCount >= 1) {
+        status.textContent = '✓ 요건 충족';
+        status.style.color = '#059669';
+        status.style.fontWeight = '600';
+      } else {
+        status.textContent = '⚠ 미충족 (1명 이상 필요)';
+        status.style.color = '#dc2626';
+        status.style.fontWeight = '600';
+      }
+    } else {
+      aiBox.style.display = 'none';
+    }
+
+    // Filter active state
+    document.querySelectorAll('.stat-card').forEach(s => {
+      s.classList.toggle('active', s.dataset.filter === currentFilter);
+    });
+
+    // Table
+    const filtered = currentFilter === 'all'
+      ? allData
+      : allData.filter(d => d.orgType === currentFilter);
+
+    const body = document.getElementById('dataBody');
+    if (filtered.length === 0) {
+      body.innerHTML = `<tr><td colspan="8" class="empty-state">
+        <div class="icon">📭</div>
+        <div>${currentFilter === 'all' ? '등록된 담당자가 없습니다.' : '해당 구분의 담당자가 없습니다.'}</div>
+      </td></tr>`;
+      return;
+    }
+    body.innerHTML = filtered.map((d, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td><span class="badge ${d.orgType}">${d.orgType}</span></td>
+        <td>
+          <div style="font-weight:600;">${escapeHtml(d.orgName)}</div>
+          ${d.department ? `<div style="font-size:12px;color:#64748b;">${escapeHtml(d.department)}</div>` : ''}
+        </td>
+        <td>
+          <div style="font-weight:600;">${escapeHtml(d.personName)}${d.aiExpert === 'Y' ? '<span class="ai-tag">AI</span>' : ''}</div>
+          ${d.position ? `<div style="font-size:12px;color:#64748b;">${escapeHtml(d.position)}</div>` : ''}
+        </td>
+        <td><span style="font-size:12.5px;">${escapeHtml(d.role || '')}</span></td>
+        <td style="font-family:monospace;font-size:12.5px;">${escapeHtml(d.phone)}</td>
+        <td style="font-size:12.5px;">${escapeHtml(d.email)}</td>
+        <td style="font-size:12px;color:#64748b;white-space:nowrap;">${escapeHtml(d.timestamp || '')}</td>
+      </tr>
+    `).join('');
+  }
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // Filter clicks
+  document.querySelectorAll('.stat-card').forEach(s => {
+    s.addEventListener('click', () => {
+      currentFilter = s.dataset.filter;
+      render();
+    });
+  });
+</script>
+</body>
+</html>
